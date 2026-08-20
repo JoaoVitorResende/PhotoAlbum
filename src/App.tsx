@@ -11,6 +11,8 @@ import InputCheckbox from "./components/input-checkbox";
 import InputSingleFile from "./components/input-single-file";
 import { useForm } from "react-hook-form";
 import ImageFilePreview from "./components/image-file-preview";
+import { Dialog, DialogBody, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "./components/dialog";
+import Text from "./components/text";
 
 
 
@@ -61,21 +63,52 @@ export default function App() {
 			</div>
 
 			<div>
-				<InpuText icon={SearchIcon} placeholder="Buscar fotos"/>
+				<InpuText icon={SearchIcon} placeholder="Buscar fotos" />
 			</div>
 
 			<div>
-				<InputCheckbox/>
+				<InputCheckbox />
 			</div>
 
 			<div>
 				<InputSingleFile
-				form={form}
-				allowedExtentions={["png", "jpg", "jpeg", "webp"]}
-				maxFileSizeInMb={50}
-				replaceBy ={<ImageFilePreview src={fileSource} alt={"Image/"}/>}
-				{...form.register("file")}
-			/>
+					form={form}
+					allowedExtentions={["png", "jpg", "jpeg", "webp"]}
+					maxFileSizeInMb={50}
+					replaceBy={<ImageFilePreview src={fileSource} alt={"Image/"} />}
+					{...form.register("file")}
+				/>
+			</div>
+			<div>
+				<Dialog>
+					<DialogTrigger asChild>
+						<Button>Abrir modal</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							teste header
+						</DialogHeader>
+						<DialogBody>
+							<Text as="div" className="mb-4">teste body</Text>
+							<InputSingleFile
+								form={form}
+								allowedExtentions={["png", "jpg", "jpeg", "webp"]}
+								maxFileSizeInMb={50}
+								replaceBy={<ImageFilePreview src={fileSource} alt={"Image/"} />}
+								{...form.register("file")}
+							/>
+						</DialogBody>
+						<DialogFooter>
+							<DialogClose asChild>
+								<Button variant="secondary">Cancelar</Button>
+							</DialogClose>
+							<Button>Adicionar</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
+			</div>
+			<div className="animate-in fade-in-0 duration-1000 bg-red-500 w-20 h-20">
+				teste
 			</div>
 		</div>
 	);
