@@ -4,7 +4,8 @@ import PhotoWidget from "../contexts/photos/components/photo-widget";
 export default function PageHome(){
     return(
         <Container>
-            <PhotoWidget photo={{
+            <div className="grid grid-cols-4 gap-9">
+                <PhotoWidget photo={{
                 id: '23',
                 title: 'teste',
                 imageId: 'portrait-tower.png',
@@ -14,6 +15,7 @@ export default function PageHome(){
                     {id: '3', title: 'Album 3'}
                 ]
             }}/>
+            </div>
         </Container>
     )
 }
