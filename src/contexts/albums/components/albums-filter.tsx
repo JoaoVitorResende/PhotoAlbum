@@ -11,15 +11,12 @@ interface AlbumsFilterProps extends React.ComponentProps<"div"> {
 
 export default function AlbumsFilter({ albums, loading, className, ...props }: AlbumsFilterProps) {
     return (
-        <div className={cx("flex items-center gap-3.5 overflow-x-auto", className)}>
+        <div className={cx("flex items-center gap-3.5 overflow-x-auto", className)} {...props}>
             <Text variant="heading-small">Albuns</Text>
             <div className="flex gap-3">
-
                 {!loading ? (
                     <>
-                        <Button variant="primary" size="sm" className="cursor-pointer">
-                            todos
-                        </Button>
+                        <Button variant="primary" size="sm" className="cursor-pointer"> todos </Button>
                         {albums.map((album) => (
                             <Button
                                 key={album.id}

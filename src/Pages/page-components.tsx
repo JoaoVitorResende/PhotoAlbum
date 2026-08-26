@@ -83,9 +83,7 @@ export default function PageComponents() {
 						<Button>Abrir modal</Button>
 					</DialogTrigger>
 					<DialogContent>
-						<DialogHeader>
-							teste header
-						</DialogHeader>
+						<DialogHeader>teste header</DialogHeader>
 						<DialogBody>
 							<Text as="div" className="mb-4">teste body</Text>
 							<InputSingleFile
