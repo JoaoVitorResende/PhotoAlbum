@@ -6,6 +6,7 @@ import Skeleton from "../components/skeleton";
 import PhotosNavigator from "../contexts/photos/components/photos-navigator";
 import ImagePreview from "../components/imagepreview";
 import Button from "../components/button";
+import AlbumsListSelectable from "../contexts/albums/components/albums-list-selectable";
 
 export default function PhotoDetails() {
     const { id } = useParams();
@@ -23,15 +24,19 @@ export default function PhotoDetails() {
     return (
         <Container>
             <header className="flex items-center justify-between gap-8 mb-8">
-                {!isloading ? (<Text variant="heading-large">{photo?.title}</Text>)
+                {!isloading ? (<Text as="h2" variant="heading-large">{photo?.title}</Text>)
                 : (<Skeleton className="w-48 h-8" />)}
                 <PhotosNavigator loading={isloading} />
             </header>
-            <div className="grid grid-cols-[21rem] gap-24">
+            <div className="grid grid-cols-[21rem_1fr] gap-24">
                 <div className="space-y-3">
                     {!isloading ? (<ImagePreview src={`/images/${photo?.imageId}`} title={photo?.title} imageClassName="h-[21rem]"/>)
                     :(<Skeleton className="h-[21rem]"/>)}
-                    {!isloading ?(<Button variant="destructive">Excluir</Button>):(<Skeleton className="w-20 h-10"/>)}
+                    {!isloading ? (<Button variant="destructive">Excluir</Button>):(<Skeleton className="w-20 h-10"/>)}
+                </div>
+                <div className="py-3">
+                    <Text as="h3" variant="heading-medium" className="mb-6">Albuns</Text>
+                    <AlbumsListSelectable photo={photo} albums={[{ id: '1', title: 'Album 1' },{ id: '2', title: 'Album 2' }, { id: '3', title: 'Album 3' }]} loading={isloading} />
                 </div>
             </div>
         </Container>
