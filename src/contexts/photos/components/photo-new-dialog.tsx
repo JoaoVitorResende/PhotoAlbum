@@ -10,44 +10,51 @@ import type { Album } from "../../albums/models/album";
 import Skeleton from "../../../components/skeleton";
 import { useForm } from "react-hook-form";
 
-interface PhotoNewDialogProps{
-    trigger : React.ReactNode;
+interface PhotoNewDialogProps {
+    trigger: React.ReactNode;
 }
 
 
-export default function PhotoNewDialog({trigger}: PhotoNewDialogProps)
-{
+export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
     const form = useForm()
     const isLoadingAlbum = false;
-    const albums: Album [] =[
+    const albums: Album[] = [
         { id: '1', title: 'Album 1' },
         { id: '2', title: 'Album 2' },
         { id: '3', title: 'Album 3' }
     ]
 
-    return(
+    return (
         <Dialog>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>Adicionar foto</DialogHeader>
+
                 <DialogBody>
-                    <InpuText placeholder="Adicione um titulo" maxLength={255}/>
+                    <InpuText placeholder="Adicione um titulo" maxLength={255} />
+
                     <Alert>
                         Tamanho maximo 50MB
-                        <br/>
+                        <br />
                         Voce pode selecionar arquivo em png, jpg ou jpeg
                     </Alert>
-                    <InputSingleFile  form={form} allowedExtentions={['png','jpg']} maxFileSizeInMb={50} replaceBy={<ImagePreview className="w-full h-56"/>}/>
+
+                    <InputSingleFile form={form} allowedExtentions={['png', 'jpg']} maxFileSizeInMb={50} replaceBy={<ImagePreview className="w-full h-56" />} />
+
                     <div className="space-y-3">
-                        <Text variant="label-small">Selecionar album</Text>
-                        {!isLoadingAlbum && albums.length > 0 && albums.map(album =>
-                            <Button  key={album.id} variant="ghost" size="sm" className="truncate"> {album.title}</Button>
-                        )}
-                        {isLoadingAlbum && Array.from({length: 5}).map((_, index) =>
-                            <Skeleton key={index} className="w-20 h-7"/>
-                        )}
+                        <div className="flex flex-wrap gap-3">
+                            <Text variant="label-small">Selecionar album</Text>
+                            {!isLoadingAlbum && albums.length > 0 && albums.map(album =>
+                                <Button key={album.id} variant="ghost" size="sm" className="truncate"> {album.title}</Button>
+                            )}
+                            {isLoadingAlbum && Array.from({ length: 5 }).map((_, index) =>
+                                <Skeleton key={index} className="w-20 h-7" />
+                            )}
+                        </div>
                     </div>
+
                 </DialogBody>
+
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="secondary">Cancelar</Button>
