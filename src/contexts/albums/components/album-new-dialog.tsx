@@ -5,8 +5,7 @@ import Text from "../../../components/text"
 import type { Photo } from "../../photos/models/photo"
 import SelectedCheckboxIllustration from "../../../assets/images/select-checkbox.svg?react"
 import Skeleton from "../../../components/skeleton"
-import ImagePreview from "../../../components/imagepreview"
-import type { Title } from "@radix-ui/react-dialog"
+import PhotoImageSelectable from "../../photos/components/photo-selectable"
 interface AlbumNewDialogProps {
     trigger: React.ReactNode
 }
@@ -25,6 +24,11 @@ export default function AlbumNewDialog({ trigger }: AlbumNewDialogProps) {
             ],
         }
     ]
+
+    function handleTogglePhoto(selected: boolean, photoId: string){
+        console.log(selected, photoId)
+    }
+
     return (
         <Dialog>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -41,20 +45,22 @@ export default function AlbumNewDialog({ trigger }: AlbumNewDialogProps) {
 
                         {!isloading && photos.length > 0 && (
                             <div className="flex flex-wrap gap-2">
-                                {photos.map(photo => (<ImagePreview
+                                {photos.map(photo => (
+                                    <PhotoImageSelectable
                                     key={photo.id}
                                     src={`/images/${photo.imageId}`}
                                     title={photo.title}
-                                    className="w-20 h-20 rounded"
+                                    imageClassName="w-20 h-20 rounded-lg"
+                                    onSelectedImage={(selected) => handleTogglePhoto(selected, photo.id)}
                                 />))}
                             </div>
                         )}
                         {isloading && (
-                            <div className="flex flex-wrap gap-2">
+                             <div className="flex flex-wrap gap-2">
                                 {Array.from({ length: 4 }).map((_, index) => (
                                     <Skeleton
                                         key={`photo-loading-${index}`}
-                                        className="w-20 h-20 rounded" />
+                                        className="w-20 h-20 rounded-lg" />
                                 ))}
                             </div>
                         )}
