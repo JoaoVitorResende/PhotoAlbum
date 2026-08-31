@@ -9,6 +9,7 @@ import Text from "../../../components/text";
 import type { Album } from "../../albums/models/album";
 import Skeleton from "../../../components/skeleton";
 import { useForm } from "react-hook-form";
+import useAlbums from "../../albums/hooks/use-albuns";
 
 interface PhotoNewDialogProps {
     trigger: React.ReactNode;
@@ -16,13 +17,8 @@ interface PhotoNewDialogProps {
 
 
 export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
+    const {albums, isloadingAlbums} = useAlbums();
     const form = useForm()
-    const isLoadingAlbum = false;
-    const albums: Album[] = [
-        { id: '1', title: 'Album 1' },
-        { id: '2', title: 'Album 2' },
-        { id: '3', title: 'Album 3' }
-    ]
 
     return (
         <Dialog>
@@ -44,10 +40,10 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
                     <div className="space-y-3">
                         <div className="flex flex-wrap gap-3">
                             <Text variant="label-small">Selecionar album</Text>
-                            {!isLoadingAlbum && albums.length > 0 && albums.map(album =>
+                            {!isloadingAlbums && albums.length > 0 && albums.map(album =>
                                 <Button key={album.id} variant="ghost" size="sm" className="truncate"> {album.title}</Button>
                             )}
-                            {isLoadingAlbum && Array.from({ length: 5 }).map((_, index) =>
+                            {isloadingAlbums && Array.from({ length: 5 }).map((_, index) =>
                                 <Skeleton key={index} className="w-20 h-7" />
                             )}
                         </div>
