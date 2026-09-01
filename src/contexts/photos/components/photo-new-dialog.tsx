@@ -22,15 +22,29 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
     const form = useForm<PhotoNewFromSchema>({
         resolver: zodResolver(photoNewFromSchema)
     });
-
+    const albumsIds = form.watch("AlbunsIds")
     const file = form.watch("file");
     const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
 
-    React.useEffect(()=>{
-        if(!modalOpen){
+    React.useEffect(() => {
+        if (!modalOpen) {
             form.reset()
         }
-    },[modalOpen, form])
+    }, [modalOpen, form])
+
+    function handleToggleAlbum(albumId: string) {
+
+        const albumsIds = form.getValues("AlbunsIds") || []
+        const albumsSet = new Set(albumsIds)
+
+
+        if (albumsSet.has(albumId)) {
+            albumsSet.delete(albumId)
+        } else {
+            albumsSet.add(albumId)
+        }
+        form.setValue("AlbunsIds", Array.from(albumsSet))
+    }
 
     function handleSubmit(payload: PhotoNewFromSchema) {
         console.log(payload);
@@ -45,9 +59,9 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
 
                     <DialogBody>
                         <InpuText placeholder="Adicione um titulo"
-                         maxLength={255}
-                         error={form.formState.errors.title?.message}
-                         {...form.register("title")}
+                            maxLength={255}
+                            error={form.formState.errors.title?.message}
+                            {...form.register("title")}
                         />
 
                         <Alert>
@@ -56,19 +70,23 @@ export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
                             Voce pode selecionar arquivo em png, jpg ou jpeg
                         </Alert>
 
-                        <InputSingleFile 
-                            form={form} 
+                        <InputSingleFile
+                            form={form}
                             allowedExtentions={['png', 'jpg']}
-                            maxFileSizeInMb={50} 
+                            maxFileSizeInMb={50}
                             replaceBy={<ImagePreview src={fileSource} className="w-full h-56" />}
-                            error ={form.formState.errors.file?.message}
+                            error={form.formState.errors.file?.message}
                             {...form.register("file")} />
 
                         <div className="space-y-3">
                             <div className="flex flex-wrap gap-3">
                                 <Text variant="label-small">Selecionar album</Text>
                                 {!isloadingAlbums && albums.length > 0 && albums.map(album =>
-                                    <Button key={album.id} variant="ghost" size="sm" className="truncate"> {album.title}</Button>
+                                    <Button key={album.id}
+                                        variant={albumsIds?.includes(album.id) ? "primary" : "ghost"}
+                                        size="sm"
+                                        className="truncate"
+                                        onClick={() => handleToggleAlbum(album.id)}> {album.title}</Button>
                                 )}
                                 {isloadingAlbums && Array.from({ length: 5 }).map((_, index) =>
                                     <Skeleton key={index} className="w-20 h-7" />
