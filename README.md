@@ -108,7 +108,3 @@ gallery-plus/
 - [ ] Organização/movimentação de fotos entre álbuns
 - [ ] Exclusão de fotos e álbuns
 - [ ] Autenticação de usuário (se aplicável)
-
-## Licença
-
-Defina a licença do projeto aqui (ex: MIT).
