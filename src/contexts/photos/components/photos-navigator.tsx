@@ -23,8 +23,8 @@ export default function PhotosNavigator({
         <div className= {cx("flex gap-2", className)} {...props}>
             {!loading ? (
                 <>
-                    <ButtonIcon icon={ArrowLeftIcon} variant="secondary" disabled={!previousPhotoId} onClick={() =>{navigate(`/fotos/${previousPhotoId}`)}}/>
-                    <Button icon={ArrowRightIcon} variant="secondary" disabled={!nextPhotoId} onClick={() => {navigate(`/fotos/${nextPhotoId}`)}}> Proxima imagem </Button>
+                    <ButtonIcon icon={ArrowLeftIcon} variant="secondary" disabled={!previousPhotoId} onClick={() =>{navigate(`/photos/${previousPhotoId}`)}}/>
+                    <Button icon={ArrowRightIcon} variant="secondary" disabled={!nextPhotoId} onClick={() => {navigate(`/photos/${nextPhotoId}`)}}> Proxima imagem </Button>
                 </>
             ):(
                 <>
