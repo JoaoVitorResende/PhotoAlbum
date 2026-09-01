@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { Dialog, DialogBody, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "../../../components/dialog";
 import Button from "../../../components/button";
 import InpuText from "../../../components/input-text";
@@ -6,59 +6,87 @@ import Alert from "../../../components/alert";
 import InputSingleFile from "../../../components/input-single-file";
 import ImagePreview from "../../../components/imagepreview";
 import Text from "../../../components/text";
-import type { Album } from "../../albums/models/album";
 import Skeleton from "../../../components/skeleton";
 import { useForm } from "react-hook-form";
 import useAlbums from "../../albums/hooks/use-albuns";
+import { photoNewFromSchema, type PhotoNewFromSchema } from "../schemas"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 interface PhotoNewDialogProps {
     trigger: React.ReactNode;
 }
 
-
 export default function PhotoNewDialog({ trigger }: PhotoNewDialogProps) {
-    const {albums, isloadingAlbums} = useAlbums();
-    const form = useForm()
+    const { albums, isloadingAlbums } = useAlbums();
+    const [modalOpen, setModalOpen] = React.useState(false)
+    const form = useForm<PhotoNewFromSchema>({
+        resolver: zodResolver(photoNewFromSchema)
+    });
+
+    const file = form.watch("file");
+    const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
+
+    React.useEffect(()=>{
+        if(!modalOpen){
+            form.reset()
+        }
+    },[modalOpen, form])
+
+    function handleSubmit(payload: PhotoNewFromSchema) {
+        console.log(payload);
+    }
 
     return (
-        <Dialog>
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent>
-                <DialogHeader>Adicionar foto</DialogHeader>
+                <form onSubmit={form.handleSubmit(handleSubmit)}>
+                    <DialogHeader>Adicionar foto</DialogHeader>
 
-                <DialogBody>
-                    <InpuText placeholder="Adicione um titulo" maxLength={255} />
+                    <DialogBody>
+                        <InpuText placeholder="Adicione um titulo"
+                         maxLength={255}
+                         error={form.formState.errors.title?.message}
+                         {...form.register("title")}
+                        />
 
-                    <Alert>
-                        Tamanho maximo 50MB
-                        <br />
-                        Voce pode selecionar arquivo em png, jpg ou jpeg
-                    </Alert>
+                        <Alert>
+                            Tamanho maximo 50MB
+                            <br />
+                            Voce pode selecionar arquivo em png, jpg ou jpeg
+                        </Alert>
 
-                    <InputSingleFile form={form} allowedExtentions={['png', 'jpg']} maxFileSizeInMb={50} replaceBy={<ImagePreview className="w-full h-56" />} />
+                        <InputSingleFile 
+                            form={form} 
+                            allowedExtentions={['png', 'jpg']}
+                            maxFileSizeInMb={50} 
+                            replaceBy={<ImagePreview src={fileSource} className="w-full h-56" />}
+                            error ={form.formState.errors.file?.message}
+                            {...form.register("file")} />
 
-                    <div className="space-y-3">
-                        <div className="flex flex-wrap gap-3">
-                            <Text variant="label-small">Selecionar album</Text>
-                            {!isloadingAlbums && albums.length > 0 && albums.map(album =>
-                                <Button key={album.id} variant="ghost" size="sm" className="truncate"> {album.title}</Button>
-                            )}
-                            {isloadingAlbums && Array.from({ length: 5 }).map((_, index) =>
-                                <Skeleton key={index} className="w-20 h-7" />
-                            )}
+                        <div className="space-y-3">
+                            <div className="flex flex-wrap gap-3">
+                                <Text variant="label-small">Selecionar album</Text>
+                                {!isloadingAlbums && albums.length > 0 && albums.map(album =>
+                                    <Button key={album.id} variant="ghost" size="sm" className="truncate"> {album.title}</Button>
+                                )}
+                                {isloadingAlbums && Array.from({ length: 5 }).map((_, index) =>
+                                    <Skeleton key={index} className="w-20 h-7" />
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                </DialogBody>
+                    </DialogBody>
 
-                <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant="secondary">Cancelar</Button>
-                    </DialogClose>
-                    <Button>Adicionar</Button>
-                </DialogFooter>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="secondary">Cancelar</Button>
+                        </DialogClose>
+                        <Button type="submit">Adicionar</Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 }
 
