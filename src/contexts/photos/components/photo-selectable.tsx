@@ -28,7 +28,7 @@ export default function PhotoImageSelectable({selected, className, onSelectedIma
 
     return(
         <label className={photoImageSelectableVariants({className, select: IsSelected})}>
-           <InputCheckbox size="sm" checked={IsSelected} onChange={handleSelected} className="absolute top-1 left-1z"/>
+           <InputCheckbox size="sm" defaultChecked={IsSelected} onChange={handleSelected} className="absolute top-1 left-1z"/>
            <ImagePreview{...props}/> 
         </label>
     )

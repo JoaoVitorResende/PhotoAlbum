@@ -4,6 +4,9 @@ import Skeleton from "../../../components/skeleton";
 import Text from "../../../components/text";
 import type { Photo } from "../../photos/models/photo";
 import type { Album } from "../models/album";
+import usePhotoAlbums from "../../photos/hooks/use-photo-albums";
+import React from "react";
+
 
 interface AlbumsListSelectableProps {
     loading?: boolean;
@@ -12,6 +15,9 @@ interface AlbumsListSelectableProps {
 }
 
 export default function AlbumsListSelectable({ albums, photo, loading }: AlbumsListSelectableProps) {
+
+    const{managePhotoOnAlbum} = usePhotoAlbums()
+    const[isUpdatingPhoto, setIsUpdatingPhoto] = React.useTransition()
 
     function isChecked(albumID: string) {
         return photo?.albums?.some(album => album.id === albumID)
@@ -27,16 +33,19 @@ export default function AlbumsListSelectable({ albums, photo, loading }: AlbumsL
         else {
             albumIds = [...photo.albums.map((album) => album.id), albumId];
         }
-        console.log("fotos que vamos enviar para o backend", albumIds)
+
+        setIsUpdatingPhoto(async () =>{
+            await  managePhotoOnAlbum(photo.id, albumIds)
+        })
     }
 
     return (
         <ul className="flex flex-col gap-4">
-            {!loading && albums?.length > 0 && albums.map((album, index) => (
+            {!loading && photo && albums?.length > 0 && albums.map((album, index) => (
                 <li key={album.id}>
                     <div className="flex items-center justify-between gap-1">
                         <Text variant="paragraph-large" className="truncate">{album.title}</Text>
-                        <InputCheckbox defaultChecked={isChecked(album.id)} onClick={() => handlePhotoOnAlbuns(album.id)}/>
+                        <InputCheckbox defaultChecked={isChecked(album.id)} onChange={() => handlePhotoOnAlbuns(album.id)} disabled={isUpdatingPhoto}/>
                     </div>
                     {index !== albums.length - 1 && <Divider className="mt-4" />}
                 </li>
@@ -49,3 +58,5 @@ export default function AlbumsListSelectable({ albums, photo, loading }: AlbumsL
         </ul>
     )
 }
+
+

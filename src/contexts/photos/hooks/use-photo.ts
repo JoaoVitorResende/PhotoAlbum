@@ -3,6 +3,8 @@ import { api, fetcher } from "../../../helpers/api";
 import type { Photo } from "../models/photo";
 import type { PhotoNewFromSchema } from "../schemas";
 import {toast} from 'sonner';
+import usePhotoAlbums from "./use-photo-albums";
+import { useNavigate } from "react-router";
 
 interface PhotoDetailsResponse extends Photo {
   nextPhotoId?: string;
@@ -10,11 +12,14 @@ interface PhotoDetailsResponse extends Photo {
 }
 
 export default function usePhoto(id?: string) {
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery<PhotoDetailsResponse>({
     queryKey: ["photo", id],
     queryFn: () => fetcher(`/photos/${id}`),
     enabled: !!id,
   });
+  const {managePhotoOnAlbum} = usePhotoAlbums();
+
   const queryClient = useQueryClient();
 
   async function createPhoto(payload: PhotoNewFromSchema) {
@@ -29,9 +34,7 @@ export default function usePhoto(id?: string) {
       );
 
       if (payload.AlbunsIds && payload.AlbunsIds.length > 0) {
-        await api.put(`/photos/${photo.id}/albums`, {
-          albumsIds: payload.AlbunsIds,
-        });
+        await managePhotoOnAlbum(photo.id, payload.AlbunsIds)
       }
       queryClient.invalidateQueries({ queryKey: ["photos"] });
       toast.success("Foto criada com sucesso")
@@ -40,11 +43,23 @@ export default function usePhoto(id?: string) {
       throw error;
     }
   }
+
+  async function deletePhoto(photoId: string) {
+  try {
+    await api.delete(`/photos/${photoId}`)
+    toast.success("foto deletada com sucesso")
+    navigate('/')
+  } catch (error) {
+    toast.error("erro ao deletar a foto")
+    throw error
+  }
+}
   return {
     photo: data,
     nextPhotoId: data?.nextPhotoId,
     previousPhotoId: data?.previousPhotoId,
     isLoadingPhoto: isLoading,
     createPhoto,
+    deletePhoto,
   };
 }
