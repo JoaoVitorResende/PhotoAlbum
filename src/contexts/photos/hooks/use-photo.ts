@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, fetcher } from "../../../helpers/api";
 import type { Photo } from "../models/photo";
 import type { PhotoNewFromSchema } from "../schemas";
+import {toast} from 'sonner';
 
 interface PhotoDetailsResponse extends Photo {
   nextPhotoId?: string;
@@ -32,9 +33,10 @@ export default function usePhoto(id?: string) {
           albumsIds: payload.AlbunsIds,
         });
       }
-
       queryClient.invalidateQueries({ queryKey: ["photos"] });
+      toast.success("Foto criada com sucesso")
     } catch (error) {
+      toast.error("erro ao criar foto")
       throw error;
     }
   }
